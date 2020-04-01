@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.zx21.dao.ArticleDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+      id,user_id as userId,title,content,praise,category,page_view as pageView,status,create_time as createTime,update_time as updateTime
+    </sql>
+    <insert id="insert" parameterType="xyz.zx21.bean.Article">
+        insert into article(user_id,title,content,praise,category,page_view,status,create_time,update_time)
+        values (#{userId},#{title},#{content},#{praise},#{category},#{pageView},#{status},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateById" parameterType="xyz.zx21.bean.Article">
+        update article
+        <set>
+            <if test="title!=null and title!=''">
+                title=#{title},
+            </if>
+            <if test="content!=null and content!=''">
+                content=#{content},
+            </if>
+            <if test="category!=null and category!=''">
+                category=#{category},
+            </if>
+            update_time=#{updateTime},
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="updateStatusById">
+        update article set status=#{status} where id=#{id}
+    </update>
+
+    <delete id="deleteById">
+        delete artucle where id=#{id}
+    </delete>
+
+    <select id="getList" resultType="xyz.zx21.bean.Article">
+        select
+        <include refid="Base_Column_List"/>
+        from article where status=0
+        order by update_time desc
+        limit #{start},#{limit}
+
+    </select>
+
+    <select id="selectById" resultType="xyz.zx21.bean.Article">
+        select
+        <include refid="Base_Column_List"/>
+        from article where status=0 and id=#{id}
+    </select>
+
+    <select id="getListByUserName" resultType="xyz.zx21.bean.Article">
+        select
+        <include refid="Base_Column_List"/>
+        from article where
+        user_id = (select id FROM user where user_name=#{userName})
+        and status=0
+        limit #{status},#{limit}
+    </select>
+
+</mapper>

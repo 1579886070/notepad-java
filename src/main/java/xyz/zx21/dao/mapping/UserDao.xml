@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.zx21.dao.UserDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="xyz.zx21.bean.User">
+        <id column="id" property="id"/>
+        <result column="user_name" property="userName"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="password" property="password"/>
+        <result column="note" property="note"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+      id,user_name as userName,nick_name as nickName,note,status,create_time as createTime,update_time as updateTime
+    </sql>
+
+    <insert id="register" parameterType="xyz.zx21.bean.User">
+        insert into user(user_name,nick_name,password,note,status,create_time,update_time)
+        values (#{userName},#{nickName},#{password},#{note},#{status},#{createTime},#{updateTime})
+    </insert>
+
+    <select id="getList" resultType="xyz.zx21.bean.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user where status=0
+        limit #{start},#{limit}
+    </select>
+
+    <select id="selectByUserName" resultType="xyz.zx21.bean.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user where user_name=#{userName}
+    </select>
+
+    <select id="selectByUserNameAndPassword" resultType="xyz.zx21.bean.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user where user_name=#{userName} and password=#{password}
+    </select>
+
+    <select id="selectById" resultType="xyz.zx21.bean.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user where id=#{id}
+    </select>
+
+    <update id="updateUser" parameterType="xyz.zx21.bean.User">
+        update user
+        <set>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="nickName!=null and nickName!=''">
+                nick_name=#{nickName},
+            </if>
+            <if test="note!=null and note!=''">
+                note=#{note},
+            </if>
+            update_time=#{updateTime},
+        </set>
+        where user_name=#{userName}
+    </update>
+
+    <update id="updateStatusById">
+        update user set status=#{status} where id=#{id}
+    </update>
+</mapper>
